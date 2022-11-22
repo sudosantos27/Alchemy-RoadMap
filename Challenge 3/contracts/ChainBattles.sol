@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract ChainBattles is ERC721URIStorage {
     using Strings for uint256;
-    using Counters for Counters.Counter;
+    using Counters for Counters.Counter;    // Auto increments IDs
     Counters.Counter private _tokenIds;
 
     mapping(uint256 => uint256) public tokenIdtoLevels; // keep track of the levels of the NFTs
@@ -35,6 +35,8 @@ contract ChainBattles is ERC721URIStorage {
         );
     }
 
+    /// @notice Returns level of NFT
+    /// @dev Returns a string
     function getLevels(uint256 tokenId) public view returns(string memory){
         uint256 levels = tokenIdtoLevels[tokenId];
         return levels.toString();
@@ -61,10 +63,12 @@ contract ChainBattles is ERC721URIStorage {
         _tokenIds.increment(); // we started on 1 because it's more clear than starting on 0
         uint256 newItemId = _tokenIds.current();
         _safeMint(msg.sender, newItemId);
-        tokenIdtoLevels[newItemId] = 0;
+        tokenIdtoLevels[newItemId] = 0; // NFT starts with Level 0
         _setTokenURI(newItemId, getTokenURI(newItemId));
     }
 
+    /// @notice Trains the NFT if exists
+    /// @dev Anyone can train any NFT that exists
     function train(uint256 tokenId) public {
         require(_exists(tokenId), "Please use an existint token");
         uint256 currentLevel = tokenIdtoLevels[tokenId];
